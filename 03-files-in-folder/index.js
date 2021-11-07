@@ -13,9 +13,9 @@ async function getFilesList() {
     fs.stat(path.join(secretFolder, file.name), (err, stats) => {
       if (stats.isFile()) {
         stdout.write(
-          `${file.name.replace(path.extname(file.name), '')}-${path
+          `${file.name.replace(path.extname(file.name), '')} - ${path
             .extname(file.name)
-            .replace('.', '')}-${stats.size}b\n`
+            .replace('.', '')} - ${stats.size}b\n`
         );
       }
     });
