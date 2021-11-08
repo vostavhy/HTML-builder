@@ -25,15 +25,45 @@ async function copyAssets(distFolder) {
   }
 }
 
-async function buildPage(componentsFolder, distFolder) {}
+async function buildPage(componentsFolder, distFolder) {
+  const components = await readdir(componentsFolder, {
+    withFileTypes: true,
+  });
+
+  let componentsObjects = [];
+
+  for (let component of components) {
+    const extName = path.extname(component.name);
+    if (extName !== '.html') continue;
+    const html = await readFile(
+      path.join(componentsFolder, component.name),
+      'utf-8'
+    );
+    componentsObjects.push({
+      name: component.name.slice(0, component.name.length - extName.length),
+      html: html,
+    });
+  }
+
+  let template = await readFile(path.join(__dirname, 'template.html'), 'utf-8');
+  for (let component of componentsObjects) {
+    template = template.replace(`{{${component.name}}}`, component.html);
+  }
+
+  const htmlPath = path.join(distFolder, 'index.html');
+  const fileOutput = fs.createWriteStream(htmlPath);
+  fileOutput.write(template);
+}
 
 async function buildSite(distFolder) {
   await mkdir(distFolder, { recursive: true });
   const stylesFolder = path.join(__dirname, 'styles');
   const bundlePath = path.join(distFolder, 'bundle.css');
+  const componentsFolder = path.join(__dirname, 'components');
 
   createBundle(stylesFolder, bundlePath);
   copyAssets(distFolder);
+  buildPage(componentsFolder, distFolder);
 }
 
 const distFolder = path.join(__dirname, 'project-dist');
