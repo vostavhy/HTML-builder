@@ -58,7 +58,7 @@ async function buildPage(componentsFolder, distFolder) {
 async function buildSite(distFolder) {
   await mkdir(distFolder, { recursive: true });
   const stylesFolder = path.join(__dirname, 'styles');
-  const bundlePath = path.join(distFolder, 'bundle.css');
+  const bundlePath = path.join(distFolder, 'style.css');
   const componentsFolder = path.join(__dirname, 'components');
 
   createBundle(stylesFolder, bundlePath);
